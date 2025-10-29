@@ -17,7 +17,7 @@ export default function Index() {
     return (
         <ScrollView style={styles.mainContainer}>
             <Text style={styles.header}>Read books like you&#39;re eating candy.</Text>
-            <Button title="Add book" onPress={() => router.push("/addBookModal")}/>
+            <Button title="Add book" onPress={() => router.push("/bookFormModal")}/>
             <View style={styles.cardContainer}>
                 {books.map((book) => (<BookCard {...book} key={book.id}/>))}
             </View>

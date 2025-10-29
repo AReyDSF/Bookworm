@@ -3,23 +3,24 @@ import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
 import {useState} from "react";
 import {StarRating} from "@/component/StarRating";
 import CustomCheckbox from "@/component/CustomCheckbox";
-import {addBook} from "@/service/BookService";
-import {NewBook} from "@/model/Book";
+import {addBook, updateBook} from "@/service/BookService";
+import {Book} from "@/model/Book";
 
-export default function AddBookModal() {
+export default function BookFormModal({book}: { book?: Book }) {
     const router = useRouter();
-    const [name, setName] = useState('');
-    const [author, setAuthor] = useState('');
-    const [editor, setEditor] = useState('');
-    const [year, setYear] = useState('');
-    const [read, setRead] = useState(false);
-    const [favorite, setFavorite] = useState(false);
-    const [rating, setRating] = useState(0);
-    const [cover, setCover] = useState('');
-    const [theme, setTheme] = useState('');
+
+    const [name, setName] = useState(book?.name ?? '');
+    const [author, setAuthor] = useState(book?.author ?? '');
+    const [editor, setEditor] = useState(book?.editor ?? '');
+    const [year, setYear] = useState(book?.year?.toString() ?? '');
+    const [read, setRead] = useState(book?.read ?? false);
+    const [favorite, setFavorite] = useState(book?.favorite ?? false);
+    const [rating, setRating] = useState(book?.rating ?? 0);
+    const [cover, setCover] = useState(book?.cover ?? '');
+    const [theme, setTheme] = useState(book?.theme ?? '');
 
     function handleSubmit() {
-        const book: NewBook = {
+        const updatedBook = {
             name,
             author,
             editor,
@@ -28,11 +29,26 @@ export default function AddBookModal() {
             favorite,
             cover,
             theme,
-            rating,
+            rating: read ? rating : 0,
         };
 
-        addBook(book);
-        router.back();
+        if (book?.id) {
+            updateBook({...updatedBook, id: book.id})
+                .then(() => {
+                    router.back();
+                })
+                .catch((error) => {
+                    console.error("Failed to update book:", error);
+                });
+        } else {
+            addBook(updatedBook)
+                .then(() => {
+                    router.back();
+                })
+                .catch((error) => {
+                    console.error("Failed to add book:", error);
+                });
+        }
     }
 
     return (
@@ -48,7 +64,8 @@ export default function AddBookModal() {
                 <CustomCheckbox label="Favorite" value={favorite} onValueChange={setFavorite}/>
             </View>
             {read && <StarRating rating={rating} setRating={setRating}/>}
-            <View style={styles.link}><Button title="Add book" onPress={handleSubmit}/></View>
+            <View style={styles.link}><Button title={book ? "Update Book" : "Add Book"} onPress={handleSubmit}/>
+            </View>
             <Link href="/" dismissTo style={styles.link}>
                 <Text>Cancel</Text>
             </Link>

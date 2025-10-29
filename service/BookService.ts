@@ -40,7 +40,7 @@ export async function getBook(id: number) {
 }
 
 export async function addBook(book: NewBook) {
-    fetch("http://localhost:3000/books/", {
+    await fetch("http://localhost:3000/books/", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
