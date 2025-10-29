@@ -10,3 +10,5 @@ export type Book = {
     cover: string;
     theme: string;
 }
+
+export type NewBook = Omit<Book, 'id'>;

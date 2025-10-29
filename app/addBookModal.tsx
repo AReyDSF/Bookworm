@@ -1,8 +1,10 @@
 import {Link, useRouter} from 'expo-router';
-import {Button, StyleSheet, Switch, Text, TextInput, View} from 'react-native';
+import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
 import {useState} from "react";
 import {StarRating} from "@/component/StarRating";
 import CustomCheckbox from "@/component/CustomCheckbox";
+import {addBook} from "@/service/BookService";
+import {NewBook} from "@/model/Book";
 
 export default function AddBookModal() {
     const router = useRouter();
@@ -16,28 +18,21 @@ export default function AddBookModal() {
     const [cover, setCover] = useState('');
     const [theme, setTheme] = useState('');
 
-    function addBook() {
-        fetch("http://localhost:3000/books/", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                author: author,
-                editor: editor,
-                year: Number(year),
-                read: read,
-                favorite: favorite,
-                cover: cover,
-                theme: theme,
-                rating: rating,
-            })
-        })
-            .then(res => res.json())
-            .then(console.log)
+    function handleSubmit() {
+        const book: NewBook = {
+            name,
+            author,
+            editor,
+            year: Number(year),
+            read,
+            favorite,
+            cover,
+            theme,
+            rating,
+        };
 
-        //router.back();
+        addBook(book);
+        router.back();
     }
 
     return (
@@ -47,16 +42,13 @@ export default function AddBookModal() {
             <TextInput style={styles.formFields} value={editor} placeholder="Enter editor" onChangeText={setEditor}/>
             <TextInput style={styles.formFields} value={year} placeholder="Enter year" onChangeText={setYear}
                        inputMode="numeric"/>
-            <Switch value={read} onValueChange={setRead}/>
-            <Switch value={favorite} onValueChange={setFavorite}/>
-            <StarRating rating={rating} setRating={setRating}/>
+            <TextInput style={styles.formFields} value={editor} placeholder="Enter editor" onChangeText={setEditor}/>
             <View style={styles.checkboxRow}>
                 <CustomCheckbox label="Read" value={read} onValueChange={setRead}/>
                 <CustomCheckbox label="Favorite" value={favorite} onValueChange={setFavorite}/>
-
             </View>
-
-            <View style={styles.link}><Button title="Add book" onPress={addBook}/></View>
+            {read && <StarRating rating={rating} setRating={setRating}/>}
+            <View style={styles.link}><Button title="Add book" onPress={handleSubmit}/></View>
             <Link href="/" dismissTo style={styles.link}>
                 <Text>Cancel</Text>
             </Link>
@@ -78,9 +70,10 @@ const styles = StyleSheet.create({
     checkboxRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         marginVertical: 8,
         width: '100%',
+        gap: 24,
     },
     formFields: {
         borderWidth: 2,
