@@ -1,12 +1,15 @@
 import {Button, Image, StyleSheet, Text, View} from 'react-native';
 import {NewBook} from '@/model/Book';
-import {useLocalSearchParams} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 import {useEffect, useState} from "react";
 import {getBook} from "@/service/BookService";
 
-export default function BookDetails() {
+export default function Id() {
     const {id} = useLocalSearchParams<{ id: string }>();
+
+    const router = useRouter();
     const [book, setBook] = useState<NewBook>();
+
 
     useEffect(() => {
         getBook(Number(id)).then((data) => setBook(data))
@@ -19,13 +22,15 @@ export default function BookDetails() {
             </View>
         );
     }
-
+    console.log("Book cover URL:", book.cover);
+    console.log("Book object in details:", book);
     return (
         <View style={styles.container}>
-            <View style={styles.imageWrapper}><Image
-                source={book.cover ? {uri: book.cover} : require("@/assets/images/unavailable.png")}
-                style={styles.cover} resizeMode="contain" alt="Book cover"
-            />
+            <View style={styles.imageWrapper}>
+                <Image
+                    source={book.cover ? {uri: book.cover} : require("@/assets/images/unavailable.png")}
+                    alt="Book cover"
+                    style={styles.cover}/>
             </View>
 
             <View style={styles.details}>
@@ -42,9 +47,8 @@ export default function BookDetails() {
                 )}
 
                 <View style={styles.actions}>
-                    <Button title="Edit" onPress={() => {/* navigate to edit */
-                    }}/>
-                    <Button title="Delete" color="red" onPress={() => {/* confirm delete */
+                    <Button title="Edit" onPress={() => router.push("/book/bookFormModal")}/>
+                    <Button title="Delete" color="red" onPress={() => {
                     }}/>
                 </View>
             </View>
@@ -68,6 +72,7 @@ const styles = StyleSheet.create({
         maxWidth: 250,
         aspectRatio: 2 / 3,
         borderRadius: 8,
+        borderWidth: 2, borderColor: 'red'
     },
     imageWrapper: {
         flexBasis: '30%',

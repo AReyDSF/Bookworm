@@ -1,28 +1,28 @@
 import {Animated, Button, StyleSheet, Text, View} from "react-native";
 import {Book} from "@/model/Book";
-import {useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import BookCard from "@/component/BookCard";
 import getBooks from "@/service/BookService";
-import {useRouter} from "expo-router";
+import {useFocusEffect, useRouter} from "expo-router";
 import ScrollView = Animated.ScrollView;
 
 export default function Index() {
     const router = useRouter();
     const [books, setBooks] = useState<Book[]>([]);
 
-    useEffect(() => {
-        getBooks().then((data) => setBooks(data));
-    }, []);
+    useFocusEffect(useCallback(() => {
+        getBooks().then(setBooks);
+    }, []));
 
     return (
         <ScrollView style={styles.mainContainer}>
             <Text style={styles.header}>Read books like you&#39;re eating candy.</Text>
-            <Button title="Add book" onPress={() => router.push("/bookFormModal")}/>
+            <Button title="Add book" onPress={() => router.push("/book/bookFormModal")}/>
+
             <View style={styles.cardContainer}>
                 {books.map((book) => (<BookCard {...book} key={book.id}/>))}
             </View>
         </ScrollView>
-
     );
 }
 

@@ -1,68 +1,74 @@
 import {Book} from "@/model/Book";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {Ionicons} from "@expo/vector-icons";
 import {Image} from "expo-image";
 import {useRouter} from "expo-router";
 
 export default function BookCard(book: Book) {
     const router = useRouter();
-
     return (
         <Pressable onPress={() => {
-            router.navigate({
-                pathname: `/bookDetails`,
-                params: {id: book.id}
-            })
+            router.push({
+                pathname: `/book/[id]`,
+                params: {id: book.id},
+            });
         }}>
             <View style={styles.card}>
-                <Image/>
-                {<Image
-                    source={book.cover ? {uri: book.cover} : require("@/assets/images/unavailable.png")}
-                    alt="Book cover"
-                    style={styles.image}/>}
-                <View style={styles.txtInCard}>
-                    <Text>Title: {book.name}</Text>
-                    <Text>Author: {book.author}</Text>
-                    <Text>Editor: {book.editor}</Text>
-                    <Text>Publication year: {book.year}</Text>
+                <View style={styles.row}>
+                    <View style={styles.imageWrapper}>
+                        <Image
+                            source={book.cover ? {uri: book.cover} : require('@/assets/images/unavailable.png')}
+                            style={styles.image}
+                        />
+                    </View>
+                    <View style={styles.body}>
+                        <Text style={styles.title}>{book.name}</Text>
+                        <Text style={styles.description}>{book.author}</Text>
+                        <Text style={styles.timestamp}>Publication year: {book.year}</Text>
+                    </View>
                 </View>
-                <Ionicons name="close-circle-outline" color="red"/>
             </View>
         </Pressable>
-
-
     )
 }
 
 const styles = StyleSheet.create({
     card: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderWidth: 2,
-        borderColor: "#ccc",
-        borderRadius: 12,
-        padding: 12,
-        backgroundColor: "#f9f9f9",
-        gap: 12,
+        maxWidth: 540,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        overflow: 'hidden',
+        elevation: 3,
+        marginVertical: 8,
+    },
+    row: {
+        flexDirection: 'row',
+    },
+    imageWrapper: {
+        width: '35%',
     },
     image: {
-        width: 80,
-        height: 120,
-        borderRadius: 8,
-        backgroundColor: "#ddd",
+        width: '100%',
+        aspectRatio: 2 / 3,
+        borderTopLeftRadius: 8,
+        borderBottomLeftRadius: 8,
     },
-    txtInCard: {
+    body: {
         flex: 1,
-        justifyContent: "center",
+        padding: 12,
+        justifyContent: 'center',
     },
     title: {
-        fontWeight: "bold",
-        fontSize: 16,
-        marginBottom: 4,
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 6,
     },
-    iconContainer: {
-        flexDirection: "row",
-        gap: 8,
+    description: {
+        fontSize: 14,
+        color: '#444',
+        marginBottom: 8,
+    },
+    timestamp: {
+        fontSize: 12,
+        color: '#888',
     },
 });
