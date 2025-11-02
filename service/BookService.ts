@@ -83,3 +83,12 @@ export async function updateBook(book: Book) {
     const updated = await response.json();
     console.log(updated);
 }
+
+export async function deleteBook(id: number) {
+    const response = await fetch(`http://localhost:3000/books/${id}`, {method: "DELETE"});
+    const text = await response.text();
+    if (!response.ok) {
+        throw new Error(text || `Failed to delete book: ${response.status}`);
+    }
+    return text;
+}

@@ -1,18 +1,30 @@
 import {Pressable, StyleSheet, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 
-export function StarRating({rating, setRating}: { rating: number, setRating: (value: number) => void }) {
+export function StarRating({rating, setRating, readonly = false}: {
+    rating: number,
+    setRating?: (value: number) => void,
+    readonly?: boolean;
+}) {
     return (
         <View style={styles.starRow}>
-            {[1, 2, 3, 4, 5].map((star) => (
-                <Pressable key={star} onPress={() => setRating(star)}>
+            {[1, 2, 3, 4, 5].map((star) => {
+                const icon = (
                     <Ionicons
-                        name={star <= rating ? "star" : "star-outline"}
+                        key={star}
+                        name={star <= rating ? 'star' : 'star-outline'}
                         size={32}
-                        color={star <= rating ? "#f5c518" : "#ccc"}
+                        color={star <= rating ? '#f5c518' : '#ccc'}
                     />
-                </Pressable>
-            ))}
+                );
+
+                if (readonly) return icon;
+                return (
+                    <Pressable key={star} onPress={() => setRating?.(star)}>
+                        {icon}
+                    </Pressable>
+                );
+            })}
         </View>
     );
 }

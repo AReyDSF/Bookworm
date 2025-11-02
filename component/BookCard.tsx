@@ -3,14 +3,12 @@ import {Pressable, StyleSheet, Text, View} from "react-native";
 import {Image} from "expo-image";
 import {useRouter} from "expo-router";
 
-export default function BookCard(book: Book) {
+export default function BookCard({book}: { book: Book }) {
     const router = useRouter();
+
     return (
-        <Pressable onPress={() => {
-            router.push({
-                pathname: `/book/[id]`,
-                params: {id: book.id},
-            });
+        <Pressable style={{width: '100%'}} onPress={() => {
+            router.push(`/book/${book.id}`);
         }}>
             <View style={styles.card}>
                 <View style={styles.row}>
@@ -22,8 +20,12 @@ export default function BookCard(book: Book) {
                     </View>
                     <View style={styles.body}>
                         <Text style={styles.title}>{book.name}</Text>
-                        <Text style={styles.description}>{book.author}</Text>
-                        <Text style={styles.timestamp}>Publication year: {book.year}</Text>
+
+                        <Text style={styles.description}>
+                            {book.author}
+                            {book.author && book.year ? ', ' : ''}
+                            {book.year ?? ''}
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -33,12 +35,14 @@ export default function BookCard(book: Book) {
 
 const styles = StyleSheet.create({
     card: {
-        maxWidth: 540,
+        width: "100%",
+        maxWidth: 640,
         backgroundColor: '#fff',
         borderRadius: 8,
         overflow: 'hidden',
         elevation: 3,
         marginVertical: 8,
+        alignSelf: 'center',
     },
     row: {
         flexDirection: 'row',
